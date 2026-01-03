@@ -4,22 +4,107 @@
   <meta charset="utf-8">
   <title>Service NSW</title>
 
-  <!-- iPhone fullscreen basics -->
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#ffffff">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="My App">
+  <meta name="apple-mobile-web-app-title" content="Service NSW">
 
-  <!-- Use your repo icon as the Home Screen icon -->
   <link rel="apple-touch-icon" href="icon.png.png">
+
+  <style>
+    body {
+      margin: 0;
+      background: #ffffff;
+      overflow: hidden;
+    }
+
+    iframe {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      border: 0;
+      background: #ffffff;
+    }
+
+    /* Privacy overlay */
+    #privacyShield {
+      position: fixed;
+      inset: 0;
+      background: #ffffff;
+      display: none;
+      z-index: 999999;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+    }
+
+    #privacyShield.show {
+      display: flex;
+    }
+
+    #privacyShield img {
+      max-width: 65%;
+      max-height: 65%;
+      object-fit: contain;
+    }
+  </style>
 </head>
-<body style="margin:0;background:#ffffff;overflow:hidden;">
+
+<body>
+
   <iframe
-    src="https://cloud.protopie.io/p/b319015b3495ad300ecf7cfc?ui=false&scaleToFit=true&enableHotspotHints=false&cursorType=touch&mockup=false&bgColor=%23F5F5F5&bgImage=undefined&playSpeed=1"
-    style="position:fixed;inset:0;border:0;width:100%;height:100%;background:#ffffff"
-    allow="fullscreen">
+    src="https://cloud.protopie.io/p/0f4ca7e0320db850c1323979?ui=false&scaleToFit=true&enableHotspotHints=false&cursorType=touch&mockup=false&bgColor=%23F5F5F5&bgImage=undefined&playSpeed=1">
   </iframe>
+
+  <div id="privacyShield" aria-hidden="true">
+    <img src="privacy.png" alt="Service NSW Privacy Screen">
+  </div>
+
+  <script>
+    const shield = document.getElementById('privacyShield');
+
+    function showShield() {
+      shield.classList.add('show');
+      shield.setAttribute('aria-hidden', 'false');
+    }
+
+    function hideShield() {
+      shield.classList.remove('show');
+      shield.setAttribute('aria-hidden', 'true');
+    }
+
+    // Arm privacy logic only after page has fully settled
+    let armed = false;
+    window.addEventListener('load', () => {
+      setTimeout(() => { armed = true; }, 1200);
+    });
+
+    // Show ONLY when page is actually backgrounded
+    document.addEventListener('visibilitychange', () => {
+      if (!armed) return;
+      if (document.hidden) {
+        showShield();
+      } else {
+        hideShield();
+      }
+    });
+
+    // iOS reliable lifecycle events
+    window.addEventListener('pagehide', () => {
+      if (!armed) return;
+      showShield();
+    });
+
+    window.addEventListener('pageshow', () => {
+      if (!armed) return;
+      hideShield();
+    });
+
+    // Ensure hidden on first render
+    hideShield();
+  </script>
+
 </body>
 </html>
-
